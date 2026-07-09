@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>地震預警互動實驗室</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Particles Background -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" id="topNav">
+    <div class="nav-brand">
+      <span class="brand-icon">&#9888;</span>
+      <span class="brand-text">地震預警互動實驗室</span>
+    </div>
+    <div class="nav-tabs" id="navTabs">
+      <button class="nav-btn active" data-tab="home">首頁</button>
+      <button class="nav-btn" data-tab="knowledge">知識科普</button>
+      <button class="nav-btn" data-tab="principle">預警原理</button>
+      <button class="nav-btn" data-tab="simulator">模擬器</button>
+      <button class="nav-btn" data-tab="history">歷史案例</button>
+      <button class="nav-btn" data-tab="agents">AI 代理</button>
+      <button class="nav-btn" data-tab="chatbot">Q&A</button>
+    </div>
+    <div class="nav-controls">
+      <button class="icon-btn" id="themeToggle" aria-label="切換主題">&#9790;</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="mainContent">
+
+    <!-- Panel: Home -->
+    <section class="content-panel active" id="panel-home">
+      <div class="hero">
+        <div class="seismic-wave">
+          <svg viewBox="0 0 800 120" preserveAspectRatio="none">
+            <path id="wavePath" d="M0,60 C100,10 200,110 300,60 C400,10 500,110 600,60 C700,10 800,60 L800,120 L0,120 Z" fill="rgba(0,212,255,0.08)"/>
+            <path id="waveLine" d="M0,60 C100,10 200,110 300,60 C400,10 500,110 600,60 C700,10 800,60" fill="none" stroke="#00d4ff" stroke-width="1.5" opacity="0.5"/>
+          </svg>
+        </div>
+        <h1 class="glitch" data-text="地震預警互動實驗室">地震預警互動實驗室</h1>
+        <p class="hero-subtitle">認識地震預警 — 從原理到模擬，一次搞懂</p>
+        <div class="status-bar">
+          <div class="status-item">
+            <span class="status-dot live"></span>
+            <span>系統狀態：<strong>展示中</strong></span>
+          </div>
+          <div class="status-item">
+            <span>觀測站數：<strong>72</strong></span>
+          </div>
+          <div class="status-item">
+            <span>最近事件：<strong>2025/01/21 M6.4 大埔地震</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard home-grid" id="homeGrid">
+        <div class="card entrance-card" data-tab-target="knowledge">
+          <div class="card-icon">&#127758;</div>
+          <h2>地震知識科普</h2>
+          <p>板塊運動、P/S 波、臺灣地震環境</p>
+        </div>
+        <div class="card entrance-card" data-tab-target="principle">
+          <div class="card-icon">&#9889;</div>
+          <h2>預警原理互動</h2>
+          <p>現地型 vs 區域型、發布管道</p>
+        </div>
+        <div class="card entrance-card" data-tab-target="simulator">
+          <div class="card-icon">&#127746;</div>
+          <h2>地震波模擬器</h2>
+          <p>觸發地震、觀察預警秒數、盲區體驗</p>
+        </div>
+        <div class="card entrance-card" data-tab-target="history">
+          <div class="card-icon">&#128214;</div>
+          <h2>歷史災害案例</h2>
+          <p>集集、美濃、花蓮、池上、大埔地震回顧</p>
+        </div>
+        <div class="card entrance-card" data-tab-target="agents">
+          <div class="card-icon">&#129302;</div>
+          <h2>AI 次世代預警</h2>
+          <p>多代理協作、LLM 報告生成</p>
+        </div>
+        <div class="card entrance-card" data-tab-target="chatbot">
+          <div class="card-icon">&#128172;</div>
+          <h2>Q&A 機器人</h2>
+          <p>任何地震預警問題，問它</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel: Knowledge -->
+    <section class="content-panel" id="panel-knowledge">
+      <div class="panel-header">
+        <h2>&#127758; 地震知識科普</h2>
+        <p>了解臺灣的地震環境與地震波基礎知識</p>
+      </div>
+      <div class="dashboard knowledge-grid">
+        <div class="card full-width" id="plateCard">
+          <h3>板塊運動</h3>
+          <canvas id="knowledge-canvas" width="700" height="250"></canvas>
+          <p class="card-note">菲律賓海板塊與歐亞大陸板塊每年以 7-8 公分聚合，持續擠壓碰撞</p>
+        </div>
+        <div class="card" id="pWaveCard">
+          <h3>P 波（縱波）</h3>
+          <div class="wave-demo">
+            <div class="wave-bar" id="pWaveBar"></div>
+          </div>
+          <ul>
+            <li>速度：~6.0 km/s（先到）</li>
+            <li>震動方向：平行傳播方向</li>
+            <li>破壞力：較小</li>
+          </ul>
+        </div>
+        <div class="card" id="sWaveCard">
+          <h3>S 波（橫波）</h3>
+          <div class="wave-demo">
+            <div class="wave-bar" id="sWaveBar"></div>
+          </div>
+          <ul>
+            <li>速度：~3.5 km/s（後到）</li>
+            <li>震動方向：垂直傳播方向</li>
+            <li>破壞力：極大</li>
+          </ul>
+        </div>
+        <div class="card full-width">
+          <h3>臺灣地震環境</h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-num">~100</span>
+              <span class="stat-label">每天地震次數</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">~100</span>
+              <span class="stat-label">每年顯著有感</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">30~40</span>
+              <span class="stat-label">年/大規模災害</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">60</span>
+              <span class="stat-label">測報中心人力</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">3000</span>
+              <span class="stat-label">觀測頻道數</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-num">24/7</span>
+              <span class="stat-label">全年無休監測</span>
+            </div>
+          </div>
+          <p class="card-note" style="margin-top:0.5rem;">1900 年以來共發生 7 次大規模災害地震（罹難百人以上）</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel: Principle -->
+    <section class="content-panel" id="panel-principle">
+      <div class="panel-header">
+        <h2>&#9889; 預警原理互動</h2>
+        <p>地震預警如何「與地震波賽跑」</p>
+      </div>
+      <div class="dashboard principle-grid">
+        <div class="card full-width">
+          <h3>核心原理</h3>
+          <canvas id="principle-canvas" width="700" height="200"></canvas>
+          <p class="card-note">P 波速度快但破壞小 → 偵測後搶在 S 波抵達前發布警報</p>
+        </div>
+        <div class="card">
+          <h3>現地型預警 (In-situ)</h3>
+          <div class="principle-compare">
+            <div class="compare-item">
+              <span class="compare-label">反應時間</span>
+              <span class="compare-value green">2~3 秒</span>
+            </div>
+            <div class="compare-item">
+              <span class="compare-label">盲區</span>
+              <span class="compare-value green">小</span>
+            </div>
+            <div class="compare-item">
+              <span class="compare-label">原理</span>
+              <span class="compare-value">單站 P 波觸發即發報</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>區域型預警 (Regional)</h3>
+          <div class="principle-compare">
+            <div class="compare-item">
+              <span class="compare-label">反應時間</span>
+              <span class="compare-value amber">8~12 秒</span>
+            </div>
+            <div class="compare-item">
+              <span class="compare-label">盲區</span>
+              <span class="compare-value amber">較大</span>
+            </div>
+            <div class="compare-item">
+              <span class="compare-label">原理</span>
+              <span class="compare-value">多站資料精算後廣播</span>
+            </div>
+          </div>
+        </div>
+        <div class="card full-width">
+          <h3>發布時效演進</h3>
+          <div class="timeline-evolution">
+            <div class="evo-item"><span class="evo-year">30 年前</span><span class="evo-val">102 秒</span></div>
+            <div class="evo-arrow">&rarr;</div>
+            <div class="evo-item"><span class="evo-year">現在</span><span class="evo-val">7 秒</span></div>
+            <div class="evo-arrow">&rarr;</div>
+            <div class="evo-item"><span class="evo-year">盲區半徑</span><span class="evo-val">35km → 25km</span></div>
+          </div>
+          <p class="card-note">發布管道：細胞廣播、電視插播、網路推播、App、LINE</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel: Simulator -->
+    <section class="content-panel" id="panel-simulator">
+      <div class="panel-header">
+        <h2>&#127746; 地震波傳播模擬器</h2>
+        <p>調整參數、觸發地震、觀察預警秒數與盲區</p>
+      </div>
+      <div class="sim-layout">
+        <div class="card sim-canvas-wrapper">
+          <canvas id="sim-canvas" width="400" height="550"></canvas>
+          <div class="sim-controls">
+            <div class="ctrl-row">
+              <label>震央</label>
+              <select id="simEpicenter">
+                <option value="hualien">花蓮外海</option>
+                <option value="chiayi">嘉義梅山斷層</option>
+                <option value="yilan">宜蘭外海</option>
+                <option value="tainan">台南甲仙</option>
+              </select>
+              <span class="ctrl-hint">或點擊地圖自訂</span>
+            </div>
+            <div class="ctrl-row">
+              <label>規模 M</label>
+              <input type="range" id="simMagnitude" min="1" max="9" step="0.1" value="7.2">
+              <span id="magDisplay">7.2</span>
+            </div>
+            <div class="ctrl-row">
+              <label>區域預警延遲</label>
+              <input type="range" id="simDelay" min="5" max="15" step="0.5" value="9.0">
+              <span id="delayDisplay">9.0s</span>
+            </div>
+            <div class="ctrl-row">
+              <label>模擬速度</label>
+              <input type="range" id="simSpeed" min="0.5" max="3" step="0.5" value="1.0">
+              <span id="speedDisplay">1.0x</span>
+            </div>
+            <div class="ctrl-actions">
+              <button class="btn btn-danger" id="btnTriggerEq">&#9654; 觸發地震</button>
+              <button class="btn btn-outline" id="btnResetEq">&#8634; 重置</button>
+            </div>
+          </div>
+        </div>
+        <div class="sim-sidebar">
+          <div class="card sim-status" id="simStatus">
+            <div class="status-indicator" id="simStatusIndicator">
+              <span class="indicator-dot safe"></span>
+              <span class="indicator-text">監測中（安全）</span>
+            </div>
+            <div class="sim-timer">T + <span id="simTimer">00.00</span>s</div>
+          </div>
+          <div class="card sim-eew-status">
+            <div class="eew-box" id="boxLocalEew">
+              <span class="eew-label">現地型</span>
+              <span class="eew-value">未觸發</span>
+            </div>
+            <div class="eew-box" id="boxRegionalEew">
+              <span class="eew-label">區域型</span>
+              <span class="eew-value">未觸發</span>
+            </div>
+          </div>
+          <div class="card sim-cities" id="simCities">
+            <h3>城市狀態</h3>
+            <div id="simCitiesList"></div>
+          </div>
+        </div>
+      </div>
+      <p class="disclaimer-note">* 本模擬為教育展示用途，非即時預警資訊</p>
+    </section>
+
+    <!-- Panel: History -->
+    <section class="content-panel" id="panel-history">
+      <div class="panel-header">
+        <h2>&#128214; 歷史災害地震案例</h2>
+        <p>從重大地震中學習，提升防災韌性</p>
+      </div>
+      <div class="history-timeline" id="historyTimeline"></div>
+    </section>
+
+    <!-- Panel: Agents -->
+    <section class="content-panel" id="panel-agents">
+      <div class="panel-header">
+        <h2>&#129302; AI 次世代預警展示</h2>
+        <p>多代理群協同運作地震分析與通報</p>
+      </div>
+      <div class="agents-layout">
+        <div class="card agents-network">
+          <h3>代理節點網路</h3>
+          <canvas id="agents-canvas" width="700" height="300"></canvas>
+          <button class="btn btn-danger" id="btnTriggerAgents">&#9654; 啟動模擬</button>
+        </div>
+        <div class="card agents-console">
+          <h3>即時日誌
+            <button class="btn-small btn-outline" id="btnClearLog">清除</button>
+          </h3>
+          <div class="console-body" id="agentConsoleLogs">
+            <div class="log-line system">[系統] 待命中</div>
+          </div>
+        </div>
+        <div class="card agents-report full-width">
+          <h3>Seismo-LLM 報告</h3>
+          <div class="report-paper" id="agentReport">
+            <div class="report-meta" id="reportMeta">尚未觸發模擬</div>
+            <div class="report-body" id="reportBody"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel: Chatbot -->
+    <section class="content-panel" id="panel-chatbot">
+      <div class="panel-header">
+        <h2>&#128172; Q&A 機器人</h2>
+        <p>有關地震預警的任何問題，儘管問！</p>
+      </div>
+      <div class="card chatbot-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg agent-msg">
+            <div class="msg-bubble">你好！我是地震預警小助手。你可以問我：什麼是盲區？P 波跟 S 波有什麼不同？AI 代理在做什麼？</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="輸入你的問題…" autocomplete="off">
+          <button class="btn" id="chatSendBtn">送出</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 交通部中央氣象署地震測報中心</p>
+    <p class="footer-note">本網站為教育展示用途，實際地震資訊請參考交通部中央氣象署官方公告。</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/knowledge.js"></script>
+  <script src="js/eew-principle.js"></script>
+  <script src="js/simulator.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/agents.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/core.js"></script>
+</body>
+</html>
